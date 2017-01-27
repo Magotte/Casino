@@ -114,6 +114,11 @@ class Customer(object):
                 self.wealth[i] = self.giftB
                 self.Gift[i] = True
 
+l = [3, 10, 10, 5, 0.1, 0.5, 200, 4, 200, 50000]
+c = Customer(l)
+print(c.wealth)
+c.UpdateWealth([10] * 5, [1] * 5)
+print(c.wealth)
 
 class Bar(object):
     def __init__(self, param, wealth):
@@ -185,6 +190,8 @@ def SimulateEvening(param):
     # Set up the first series of drinks orders
     bar = Bar(param, customers.wealth)
     # Customers can order drinks before playing
+    eveningtable = [0] * (casino.nbRoulette + casino.nbCraps)
+    barincome = 0
     customers.UpdateWealth([0] * customers.nbC, [i + j for i, j in zip(bar.spend, bar.tips)])
     for i in range(1, casino.rounds):
         # Set up the order at the bar and make customers by drinks before even starting a round
@@ -198,7 +205,6 @@ def SimulateEvening(param):
         result = []
         mixedid = []
         tableincome = []
-        eveningtable = [0] * (casino.nbRoulette + casino.nbCraps)
     # return [min([i - j for i, j in zip(w, customers.wealth)]), customers.wealth, w]
 
         # Roulette tables
@@ -215,18 +221,18 @@ def SimulateEvening(param):
             store = c.SimulateGame(SubList(i, customers.tables, customers.amounts))
             tableincome.append(store[0] * (1 - bool(store[0] > 0) * 0.005))  # Table benefit minus croupier bonus
             result = result + store[1]
-        bar = Bar(param, customers.wealth)
         # Recover the outcomes for every customers in same order as before splitting
         alloutcomes = [i - j for i, j in zip(SortID(mixedid, result), customers.amounts)]
+        customers.UpdateWealth(alloutcomes, [0] * customers.nbC)
         # And update their budget for next round with their new drinks expenditures
-        w = customers.wealth
-        customers.UpdateWealth(alloutcomes, [i + j for i, j in zip(bar.spend, bar.tips)])
-        return min(customers.wealth)
-#         eveningtable = [i + j for i, j in zip(eveningtable, tableincome)]  # Keeps track of revenues for all tables across rounds
-#     # Revenues for different games
-#     Evening = [sum(eveningtable[0:(casino.nbRoulette - 1)])]  # Roulette results
-#     Evening += [sum(eveningtable[casino.nbRoulette:len(eveningtable)])]  # Craps results
-#     cashflow = casino.cash + sum(Evening) - casino.salaries
-#     return [Evening, cashflow]
+        bar = Bar(param, customers.wealth)
+        barincome += sum(bar.spend)
+        customers.UpdateWealth([0] * customers.nbC, [i + j for i, j in zip(bar.spend, bar.tips)])
+        eveningtable = [i + j for i, j in zip(eveningtable, tableincome)]  # Keeps track of revenues for all tables across rounds
+    # Revenues for different games
+    Evening = [sum(eveningtable[0:(casino.nbRoulette - 1)])]  # Roulette results
+    Evening += [sum(eveningtable[casino.nbRoulette:len(eveningtable)])]  # Craps results
+    cashflow = casino.cash + sum(Evening) + barincome - casino.salaries
+    return [Evening, cashflow]
 test = SimulateEvening(l)
 print(test)
