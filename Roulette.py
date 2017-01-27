@@ -1,0 +1,64 @@
+import random
+
+def r(n, seq):
+    choices = []
+    for i in range(n):
+        choices.append(random.choice(seq))
+    return(choices)
+# Minimum amount to be betted
+min = 25
+
+
+# Returns True if the element inside a list is superior to min
+# Takes a list and an integer as argument
+
+# def AboveMinimum(l,m):
+#     above = []
+#     for i in l:
+#         if i >= m:
+#             above.append(True)
+#         else:
+#             above.append(False)
+#     return(above)
+# def AboveMinimum(l,m):
+#     above = [True]*len(l)
+#     for i in range(len(l)):
+#         if l[i] < m:
+#             above[i] = False
+#     return(above)
+
+def AboveMinimum(l, m):
+    above = []
+    for i in l:
+        above.append(bool(i >= m))
+    return (above)
+
+def SpinTheWheel(bets):
+    # Number at which the wheel stops
+    stop = random.randint(0, 36)
+    # Win = True, Lost = False
+    win = []
+    for i in bets:
+        # If the bet is equal stop: True, else False
+        win.append(bool(i == stop))
+    # print(stop)
+    # How many won ?
+    swin = sum(win)
+    # if swin != 0:
+    #     print(swin)
+    # else:
+    #     print("Nobody won")
+    return (win)
+
+class Roulette(object):
+    """Roulette game"""
+    def __init__(self, minimum):
+        self.min = minimum
+    def SimulateGame(self, amounts):
+        bets = r(len(amounts), range(1, 37))
+        w = SpinTheWheel(bets)
+        # Check that the amount betted is superior to the minimum
+        # We zip the two lists to multiply the terms of same position together
+        gains = [i * j * k * 31 for i, j, k in zip(w, amounts, AboveMinimum(amounts, self.min))]
+        casinoGains = sum(amounts) - sum(gains) + sum([i * 30 for i in w])
+        return ([casinoGains, gains])
