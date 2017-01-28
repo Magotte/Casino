@@ -191,8 +191,8 @@ def SimulateEvening(param):
     bar = Bar(param, customers.wealth)
     # Customers can order drinks before playing
     eveningtable = [0] * (casino.nbRoulette + casino.nbCraps)
-    barincome = 0
     customers.UpdateWealth([0] * customers.nbC, [i + j for i, j in zip(bar.spend, bar.tips)])
+    barincome = sum(bar.spend)
     for i in range(1, casino.rounds):
         # Set up the order at the bar and make customers by drinks before even starting a round
         # Generate tables
@@ -213,14 +213,14 @@ def SimulateEvening(param):
             mixedid += SubList(i, customers.tables, customers.ID)
             store = r.SimulateGame(SubList(i, customers.tables, customers.amounts))  # For a specific table
             tableincome.append(store[0])
-            result = result + store[1]
+            result += store[1]
         # Craps tables
         for i in range(casino.nbRoulette + 1, casino.nbRoulette + casino.nbCraps + 1):
             c = Craps.Craps(customers.minC)
             mixedid += SubList(i, customers.tables, customers.ID)
             store = c.SimulateGame(SubList(i, customers.tables, customers.amounts))
             tableincome.append(store[0] * (1 - bool(store[0] > 0) * 0.005))  # Table benefit minus croupier bonus
-            result = result + store[1]
+            result += store[1]
         # Recover the outcomes for every customers in same order as before splitting
         alloutcomes = [i - j for i, j in zip(SortID(mixedid, result), customers.amounts)]
         customers.UpdateWealth(alloutcomes, [0] * customers.nbC)
