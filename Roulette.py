@@ -23,13 +23,14 @@ def SpinTheWheel(bets):
     for i in bets:
         # If the bet is equal stop: True, else False
         win.append(bool(i == stop))
-    # print(stop)
+    print("It stopped at %s" %(stop))
     # How many won ?
-    swin = sum(win)
-    # if swin != 0:
-    #     print(swin)
-    # else:
-    #     print("Nobody won")
+    if sum(win) > 1:
+        print("%s players won" %(sum(win)))
+    elif sum(win) == 1:
+        print("One player won")
+    else:
+        print("Nobody won")
     return (win)
 class Roulette(object):
     """Roulette game"""
@@ -43,3 +44,6 @@ class Roulette(object):
         gains = [i * j * k * 30 for i, j, k in zip(w, amounts, AboveMinimum(amounts, self.min))]
         casinoGains = sum(amounts) - sum(gains)
         return [casinoGains, gains]
+
+rou = Roulette(0)
+rou.SimulateGame(r(100, range(101)), r(100, range(36)))

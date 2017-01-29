@@ -51,7 +51,7 @@ class Craps(object):
     def SimulateGame(self, amounts, bets):
         w = RollTheDices(bets, distScale)
         # Check that the amount betted is superior to the minimum
-        # We zip the two lists to multiply the terms of same position together
+        # I zip the two lists to multiply the terms of same position together
         gains = [i * j * k for i, j, k in zip(w, amounts, AboveMinimum(amounts, self.min))]
         casinoGains = sum(amounts) - sum(gains)
         return [casinoGains, gains]
