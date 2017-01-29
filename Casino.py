@@ -2,7 +2,6 @@ import random
 import math
 
 
-
 ################ Helping functions
 
 ########################################################################################################################
@@ -159,7 +158,7 @@ class Customer(object):
         self.giftB = param[6]  # Gift given to bachelors if they are out of money (given once)
         self.minR = random.choice([50, 100, 200]) # Minimum bet for Roulette (the same each evening ?)
         self.minC = random.choice([0, 25, 50])  # Minimum bet for Craps (the same each evening ?)
-        self.types = AssignTypes(self.propB, self.propR, "bachelor", "returning", "new", self.nbC) # types of each customers
+        self.types = AssignTypes(self.propB, self.propR, "bachelor", "returning", "new", self.nbC)
         self.wealth = AssignWealth(self.types)  # Initial wealth of each customers
         self.ID = [i for i in range(self.nbC)]  # Customers identifier to keep track of them as they change tables
         self.Gift = [False] * self.nbC  # Keeps track of whether bachelors have been bailed out already
@@ -218,9 +217,6 @@ class Bar(object):
     def __init__(self, param):
         self.nbC = param[3]  # Number of customers
         self.bar = param[7]  # Number of barmen
-        # In-between each rounds, customers would like to order 0, 1, or 2 times without considering their budget
-        # If they have more than 60$ they by drinks else nothing
-        self.orders = r(self.nbC, [0, 1, 2])
         # Each barmen can take orders: Assigns customers to any of them randomly
         self.barmen = r(self.nbC, range(1, self.bar + 1))
 
@@ -231,19 +227,22 @@ class Bar(object):
     def Orders(self, wealth, amounts):
         spend = []
         tips = []
+        # In-between each rounds, customers would like to order 0, 1, or 2 times without considering their budget
+        # If they have more than 60$ they by drinks else nothing
+        orders = r(self.nbC, [0, 1, 2])
         barmantips = [0] * self.bar
-        if sum(self.orders) > self.bar * 20:  # Taking into account the bar capacity
+        if sum(orders) > self.bar * 20:  # Taking into account the bar capacity
             # Decrease the number of orders of the unlucky
-            self.orders = [i - j for i, j in zip(self.orders, PickCustomers(self.orders, self.bar, 20))]
+            orders = [i - j for i, j in zip(orders, PickCustomers(orders, self.bar, 20))]
         for i in range(self.nbC):
             # If she doesn't want to drink or doesn't have the money or is not happy...
-            if self.orders[i] == 0 or wealth[i] < 60 or amounts[i] == 0:
+            if orders[i] == 0 or wealth[i] < 60 or amounts[i] == 0:
                 spend.append(0)  # ... she does not spend money at the bar
                 tips.append(0)   # and so does not tip
             else:  # if she has the money, she wants to drink and she played beforehand...
                 spend.append(random.choice([1, 2]) * 20)  # ... she randomly picks between 1 and 2 drinks for 20$ each
                 tips.append(random.choice(range(21)))  # and tips between 1 and 20
-            if self.orders[i] == 2 and wealth[i] - spend[i] - tips[i] >= 60:  # if she wants to order a second time
+            if orders[i] == 2 and wealth[i] - spend[i] - tips[i] >= 60:  # if she wants to order a second time
                 spend[i] += random.choice([1, 2]) * 20  # Same thing
                 tips[i] += random.choice(range(21))     # Same thing
             barmantips[self.barmen[i] - 1] += tips[i]  # Store the total tips of the salve for each barmen
@@ -306,8 +305,8 @@ def SimulateEvening(param):
         customers.AmountsBetted()  # Generate amounts bet
         # result stores the gains of players: 0 or a positive number (their bet times the coefficient: 30 for Roulette)
         result = []
-        mixedid = []  # mixedId stores the Id number of the players in "table order" (so mixed)
-        tableincome = []  # tableIncome stores the income of the tables for one round (negative or positive)
+        mixedid = []  # mixedid stores the Id number of the players in "table order" (so mixed)
+        tableincome = []  # tableincome stores the income of the tables for one round (negative or positive)
 
         # Roulette tables
         for j in range(1, casino.nbRoulette + 1):  # 1 to 10 Roulette
@@ -344,7 +343,8 @@ def SimulateEvening(param):
     # Returns lists and vectors: [list, list, int, int]
 
 
-# Rounds, Roulette, Craps, Customers, Bachelor, Returning, Gift, Barmen, Wage, Cash flow
+# # Rounds, Roulette, Craps, Customers, Bachelor, Returning, Gift, Barmen, Wage, Cash flow
 # l = [3, 10, 10, 100, 0.1, 0.5, 200, 4, 200, 50000]
 # test = SimulateEvening(l)
 # print(test)
+

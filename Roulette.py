@@ -5,28 +5,10 @@ def r(n, seq):
     for i in range(n):
         choices.append(random.choice(seq))
     return(choices)
-# Minimum amount to be betted
-min = 25
 
 
 # Returns True if the element inside a list is superior to min
 # Takes a list and an integer as argument
-
-# def AboveMinimum(l,m):
-#     above = []
-#     for i in l:
-#         if i >= m:
-#             above.append(True)
-#         else:
-#             above.append(False)
-#     return(above)
-# def AboveMinimum(l,m):
-#     above = [True]*len(l)
-#     for i in range(len(l)):
-#         if l[i] < m:
-#             above[i] = False
-#     return(above)
-
 def AboveMinimum(l, m):
     above = []
     for i in l:
