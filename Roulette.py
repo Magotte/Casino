@@ -44,6 +44,3 @@ class Roulette(object):
         gains = [i * j * k * 30 for i, j, k in zip(w, amounts, AboveMinimum(amounts, self.min))]
         casinoGains = sum(amounts) - sum(gains)
         return [casinoGains, gains]
-
-rou = Roulette(0)
-rou.SimulateGame(r(100, range(101)), r(100, range(36)))
