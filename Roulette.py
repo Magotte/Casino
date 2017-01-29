@@ -49,16 +49,15 @@ def SpinTheWheel(bets):
     # else:
     #     print("Nobody won")
     return (win)
-
 class Roulette(object):
     """Roulette game"""
     def __init__(self, minimum):
         self.min = minimum
-    def SimulateGame(self, amounts):
-        bets = r(len(amounts), range(1, 37))
+
+    def SimulateGame(self, amounts, bets):
         w = SpinTheWheel(bets)
         # Check that the amount betted is superior to the minimum
         # We zip the two lists to multiply the terms of same position together
-        gains = [i * j * k * 31 for i, j, k in zip(w, amounts, AboveMinimum(amounts, self.min))]
-        casinoGains = sum(amounts) - sum(gains) + sum([i * 30 for i in w])
-        return ([casinoGains, gains])
+        gains = [i * j * k * 30 for i, j, k in zip(w, amounts, AboveMinimum(amounts, self.min))]
+        casinoGains = sum(amounts) - sum(gains)
+        return [casinoGains, gains]
